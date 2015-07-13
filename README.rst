@@ -34,13 +34,11 @@ Behaviours
 
 Splitting on spaces, the fields are:
 
-::
-
-    1. The first character is the log level, followed by MMDD (month, day)
-    2. HH:MM:SS.microseconds
-    3. Process ID
-    4. basename\_of\_sourcefile.py:linenumber]
-    5. The body of the log message.
+1. The first character is the log level, followed by MMDD (month, day)
+2. HH:MM:SS.microseconds
+3. Process ID
+4. basename\_of\_sourcefile.py:linenumber]
+5. The body of the log message.
 
 Example use
 -----------

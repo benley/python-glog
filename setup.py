@@ -20,7 +20,7 @@ setuptools.setup(
     version=VERSION,
     classifiers = [
         'Programming Language :: Python',
-        'Development Status :: 4- Beta',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Topic :: System :: Logging',

@@ -18,4 +18,13 @@ setuptools.setup(
     py_modules=['glog'],
     license='BSD',
     version=VERSION,
+    classifiers = [
+        'Programming Language :: Python',
+        'Development Status :: 4- Beta',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
+        'Topic :: System :: Logging',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+    ],
+    platforms='any',
 )

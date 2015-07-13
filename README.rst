@@ -9,6 +9,10 @@ logger documentation, and almost nobody actually needs things like
 loggers that can be reconfigured over the network. We just want to get
 on with writing our apps.
 
+Styled somewhat after the twitter.common.log_ interface, which in turn was
+modeled after Google's internal python logger, which was `never actually
+released`_ to the wild, and which in turn was based on the `C++ glog module`_.
+
 Core benefits
 -------------
 
@@ -73,3 +77,7 @@ parsing flags, like so:
         main(posargs[1:])
 
 Happy logging!
+
+.. _twitter.common.log: https://github.com/twitter/commons/tree/master/src/python/twitter/common/log
+.. _never actually released: https://groups.google.com/d/msg/google-glog/a_JcyJ4p8MQ/Xu-vDPiuCCYJ
+.. _C++ glog module: https://github.com/google/glog

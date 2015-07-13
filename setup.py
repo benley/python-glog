@@ -15,7 +15,7 @@ setuptools.setup(
     install_requires=['python-gflags'],
     description='Simple Google-style logging wrapper for Python.',
     long_description=README,
-    py_modules='glog',
+    py_modules=['glog'],
     license='BSD',
     version=VERSION,
 )

@@ -56,7 +56,7 @@ Example use
     log.error("Something went wrong")
     log.fatal("AAAAAAAAAAAAAAA!")
 
-If your app uses gflags, it will automatically gain a --verbosity flag.
+If your app uses gflags_, it will automatically gain a --verbosity flag.
 In order for that flag to be effective, you must call log.init() after
 parsing flags, like so:
 
@@ -81,3 +81,4 @@ Happy logging!
 .. _twitter.common.log: https://github.com/twitter/commons/tree/master/src/python/twitter/common/log
 .. _never actually released: https://groups.google.com/d/msg/google-glog/a_JcyJ4p8MQ/Xu-vDPiuCCYJ
 .. _C++ glog module: https://github.com/google/glog
+.. _gflags: https://github.com/google/python-gflags

@@ -112,10 +112,7 @@ class GlogFormatter(logging.Formatter):
         record.getMessage = lambda: record_message
         return logging.Formatter.format(self, record)
 
-logger = logging.getLogger()
-handler = logging.StreamHandler()
-
-level = logger.level
+logger = logging.getLogger("glog")
 
 
 def setLevel(newlevel):
@@ -124,24 +121,35 @@ def setLevel(newlevel):
     logger.debug('Log level set to %s', newlevel)
 
 
-def init():
+def init(filename=None):
+    logger.propagate = False
+    if filename is None:
+        handler = logging.StreamHandler()
+    else:
+        handler = logging.FileHandler(filename)
+
+    handler.setFormatter(GlogFormatter())
+    logger.addHandler(handler)
     setLevel(FLAGS.verbosity)
 
-debug = logging.debug
-info = logging.info
-warning = logging.warning
-warn = logging.warning
-error = logging.error
-exception = logging.exception
-fatal = logging.fatal
-log = logging.log
+debug = logger.debug
+info = logger.info
+warning = logger.warning
+warn = logger.warning
+error = logger.error
+exception = logger.exception
+fatal = logger.fatal
+log = logger.log
 
-DEBUG = logging.DEBUG
-INFO = logging.INFO
-WARNING = logging.WARNING
-WARN = logging.WARN
-ERROR = logging.ERROR
-FATAL = logging.FATAL
+
+DEBUG = logger.debug
+INFO = logger.info
+WARNING = logger.warning
+WARN = logger.warning
+ERROR = logger.error
+FATAL = logger.fatal
+
+# basicConfig = logger.basicConfig
 
 _level_names = {
     DEBUG: 'DEBUG',
@@ -166,6 +174,4 @@ GLOG_PREFIX_REGEX = (
     """) % ''.join(_level_letters)
 """Regex you can use to parse glog line prefixes."""
 
-handler.setFormatter(GlogFormatter())
-logger.addHandler(handler)
-setLevel(FLAGS.verbosity)
+init()

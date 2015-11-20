@@ -142,12 +142,12 @@ fatal = logger.fatal
 log = logger.log
 
 
-DEBUG = logger.debug
-INFO = logger.info
-WARNING = logger.warning
-WARN = logger.warning
-ERROR = logger.error
-FATAL = logger.fatal
+DEBUG = logging.DEBUG
+INFO = logging.INFO
+WARNING = logging.WARNING
+WARN = logging.WARN
+ERROR = logging.ERROR
+FATAL = logging.FATAL
 
 # basicConfig = logger.basicConfig
 

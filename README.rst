@@ -30,7 +30,8 @@ that uses the standard Python logging module will play along nicely.
 Behaviours
 ----------
 
--  Messages are always written to stderr.
+-  Messages are always written to stderr by default. A copy could be saved to
+   file by configuration.
 
 -  Lines are prefixed with a google-style log prefix, of the form
 
@@ -75,6 +76,19 @@ parsing flags, like so:
         posargs = FLAGS(sys.argv)
         log.init()
         main(posargs[1:])
+
+To show log and save a copy to file at the same time:
+
+.. code:: python
+
+    import glog as log
+
+    log.init("example.log")
+
+    log.info("It works.")
+    log.warn("Something not ideal")
+    log.error("Something went wrong")
+    log.fatal("AAAAAAAAAAAAAAA!")
 
 Happy logging!
 

@@ -77,12 +77,14 @@ parsing flags, like so:
         main(posargs[1:])
 
 
-The `C++ glog library`_ provides a set of `check macros`_ that help document and enforce
-invariants.  These are superior to standard python asserts because they provide
-a message indicating the values that caused the check to fail.  This helps in
-reproducing failure cases and provides values for test cases.
+The `C++ glog library`_ provides a set of `check macros`_ that help document and
+enforce invariants.  These are superior to standard python asserts because
+they provide a detailed message indicating the values that caused the check to 
+fail with no additional boilerplate code.  This makes code more readable.  A
+stack trace is printed which identifies the code-path that caused the failure,
+making it easier to reproduce the error.  Failed checks raise the
+FailedCheckException.
 
-https://google-glog.googlecode.com/svn/trunk/doc/glog.html#check
 
 .. code:: python
 

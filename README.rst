@@ -68,7 +68,7 @@ parsing flags, like so:
 
     FLAGS = gflags.FLAGS
 
-    def main():
+    def main(_):
       log.debug('warble garble %s', FLAGS.verbosity)
 
     if __name__ == '__main__':

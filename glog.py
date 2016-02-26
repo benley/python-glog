@@ -126,7 +126,7 @@ class GlogFormatter(logging.Formatter):
             level = '?'
         date = time.localtime(record.created)
         date_usec = (record.created - int(record.created)) * 1e6
-        record_message = '[%c%02d%02d %02d:%02d:%02d.%06d %s %s:%d] %s' % (
+        record_message = '%c%02d%02d %02d:%02d:%02d.%06d %s %s:%d] %s' % (
             level, date.tm_mon, date.tm_mday, date.tm_hour, date.tm_min,
             date.tm_sec, date_usec,
             record.process if record.process is not None else '?????',

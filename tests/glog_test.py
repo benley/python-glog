@@ -33,45 +33,45 @@ class TestLoggingMethods(unittest.TestCase):
 class TestCheckMethods(unittest.TestCase):
     
     def test_check(self):
-        log.CHECK(True)
-        self.assertRaises(log.FailedCheckException, log.CHECK, False)
+        log.check(True)
+        self.assertRaises(log.FailedCheckException, log.check, False)
         return
     
     def test_check_eq(self):
-        log.CHECK_EQ(1, 1)
-        self.assertRaises(log.FailedCheckException, log.CHECK_EQ, 1, 2)
+        log.check_eq(1, 1)
+        self.assertRaises(log.FailedCheckException, log.check_eq, 1, 2)
         return
     
     def test_check_ne(self):
-        log.CHECK_NE(1, 2)
-        self.assertRaises(log.FailedCheckException, log.CHECK_NE, 1, 1)
+        log.check_ne(1, 2)
+        self.assertRaises(log.FailedCheckException, log.check_ne, 1, 1)
         return
     
     def test_check_le(self):
-        log.CHECK_LE(1, 2)
-        log.CHECK_LE(1, 1)
-        self.assertRaises(log.FailedCheckException, log.CHECK_LE, 1.1, 1)
+        log.check_le(1, 2)
+        log.check_le(1, 1)
+        self.assertRaises(log.FailedCheckException, log.check_le, 1.1, 1)
         return
     
     def test_check_ge(self):
-        log.CHECK_GE(2, 1)
-        log.CHECK_GE(1, 1)
-        self.assertRaises(log.FailedCheckException, log.CHECK_GE, 1, 1.1)
+        log.check_ge(2, 1)
+        log.check_ge(1, 1)
+        self.assertRaises(log.FailedCheckException, log.check_ge, 1, 1.1)
         return
     
     def test_check_lt(self):
-        log.CHECK_LT(1, 2)
-        self.assertRaises(log.FailedCheckException, log.CHECK_LT, 1, 1)
+        log.check_lt(1, 2)
+        self.assertRaises(log.FailedCheckException, log.check_lt, 1, 1)
         return
     
     def test_check_gt(self):
-        log.CHECK_GT(2, 1)
-        self.assertRaises(log.FailedCheckException, log.CHECK_GT, 1, 1)
+        log.check_gt(2, 1)
+        self.assertRaises(log.FailedCheckException, log.check_gt, 1, 1)
         return
     
     def test_check_not_none(self):
-        log.CHECK_NOTNONE('not none')
-        self.assertRaises(log.FailedCheckException, log.CHECK_NOTNONE, None)
+        log.check_notnone('not none')
+        self.assertRaises(log.FailedCheckException, log.check_notnone, None)
         return
      
  

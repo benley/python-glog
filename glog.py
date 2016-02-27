@@ -76,8 +76,8 @@ https://google-glog.googlecode.com/svn/trunk/doc/glog.html#check
     import math
     
     def compute_something(a):
-        log.CHECK_EQ(type(a), float) # require floating point types
-        log.CHECK_GE(a, 0) # require non-negative values
+        log.check_eq(type(a), float) # require floating point types
+        log.check_ge(a, 0) # require non-negative values
         value = math.sqrt(a)
         return value
    
@@ -109,7 +109,7 @@ def format_message(record):
 
 class GlogFormatter(logging.Formatter):
     LEVEL_MAP = {
-        logging.FATAL: 'F',
+        logging.FATAL: 'F',  # FATAL is alias of CRITICAL
         logging.ERROR: 'E',
         logging.WARN: 'W',
         logging.INFO: 'I',
@@ -198,20 +198,17 @@ setLevel(FLAGS.verbosity)
 # Define functions emulating C++ glog check-macros 
 # https://google-glog.googlecode.com/svn/trunk/doc/glog.html#check
 
-def pretty_print_stacktrace(stack, truncate_depth=-2):
+def format_stacktrace(stack):
     """ Print a stack trace that is easier to read. 
-    
     * Reduce paths to basename component
     * Truncates the part of the stack after the check failure
     """
-    stack = stack[0:truncate_depth]
-    sys.stderr.write("Failed check here:\n")
+    lines = []
     for i, f in enumerate(stack):
         name = os.path.basename(f[0])
-        line = "\t%s:%d\t%s\n" % (name + "::" + f[2], f[1], f[3])
-        sys.stderr.write(line)
-    sys.stderr.write('\n')
-    return
+        line = "\t%s:%d\t%s" % (name + "::" + f[2], f[1], f[3])
+        lines.append(line)    
+    return lines
 
 
 class FailedCheckException(Exception):
@@ -219,93 +216,99 @@ class FailedCheckException(Exception):
     """ Exception with message indicating check-failure location and values. """
 
     def __init__(self, message):
-        stack = traceback.extract_stack()
-        pretty_print_stacktrace(stack, -2)  # make trace end at check location 
-        stack_depth = -3
-        process = os.getpid()
-        filename = stack[stack_depth][0]
-        lineno = stack[stack_depth][1]
-        created = time.time()
-        date = time.localtime(created)
-        date_usec = (created - int(created)) * 1e6
-        level = 'F'
-        self.record_message = '\n[%c%02d%02d %02d:%02d:%02d.%06d %s %s:%d] %s' % (
-            level, date.tm_mon, date.tm_mday, date.tm_hour, date.tm_min,
-            date.tm_sec, date_usec,
-            process if process is not None else '?????',
-            filename,
-            lineno,
-            message)
+        self.message = message
         return
 
     def __str__(self):
-        return self.record_message
+        return self.message
+
+
+def check_failed(message):
+    stack = traceback.extract_stack()
+    stack = stack[0:-2]
+    stacktrace_lines = format_stacktrace(stack)
+    process = os.getpid()
+    filename, line_num, _, _ = stack[-1]
+    created = time.time()
+    date = time.localtime(created)
+    date_usec = (created - int(created)) * 1e6
+    try:
+        raise FailedCheckException(message)
+    except FailedCheckException:
+        log_record = logger.makeRecord('CRITICAL', 50, filename, line_num, message, None, None)
+        handler.handle(log_record)    
         
-
-
-def CHECK(condition, message=None):
-    """ Exit with message if condition is False """
+        log_record = logger.makeRecord('DEBUG', 10, filename, line_num, 'Check failed here:' , None, None)
+        handler.handle(log_record)
+        for line in stacktrace_lines:
+            log_record = logger.makeRecord('DEBUG', 10, filename, line_num, line, None, None)
+            handler.handle(log_record)
+        raise
+    return
+    
+def check(condition, message=None):
+    """ Raise exception with message if condition is False """
     if not condition:
         if message is None:
             message = "Check failed."
-        raise FailedCheckException(message)
+        check_failed(message)
 
 
-def CHECK_EQ(obj1, obj2, message=None):
-    """ Exit with message if obj1 != obj2. """
+def check_eq(obj1, obj2, message=None):
+    """ Raise exception with message if obj1 != obj2. """
     if obj1 != obj2:
         if message is None:
             message = "check failed: %s != %s" % (str(obj1), str(obj2))
-        raise FailedCheckException(message)
+        check_failed(message)
 
 
-def CHECK_NE(obj1, obj2, message=None):
-    """ Exit with message if obj1 == obj2. """
+def check_ne(obj1, obj2, message=None):
+    """ Raise exception with message if obj1 == obj2. """
     if obj1 == obj2:
         if message is None:
             message = "check failed: %s == %s" % (str(obj1), str(obj2))
-        raise FailedCheckException(message)
+        check_failed(message)
 
 
-def CHECK_LE(obj1, obj2, message=None):
-    """ Exit with message if not (obj1 <= obj2). """
+def check_le(obj1, obj2, message=None):
+    """ Raise exception with message if not (obj1 <= obj2). """
     if obj1 > obj2:
         if message is None:
             message = "check failed: %s > %s" % (str(obj1), str(obj2))
-        raise FailedCheckException(message)
+        check_failed(message)
 
 
-def CHECK_GE(obj1, obj2, message=None):
-    """ Exit with message if not (obj1 >= obj2)
+def check_ge(obj1, obj2, message=None):
+    """ Raise exception with message if not (obj1 >= obj2)
     """
     if obj1 < obj2:
         if message is None:
             message = "check failed: %s < %s" % (str(obj1), str(obj2))
-        raise FailedCheckException(message)
+        check_failed(message)
 
 
-def CHECK_LT(obj1, obj2, message=None):
-    """ Exit with message if not (obj1 < obj2). """
+def check_lt(obj1, obj2, message=None):
+    """ Raise exception with message if not (obj1 < obj2). """
     if obj1 >= obj2:
         if message is None:
             message = "check failed: %s >= %s" % (str(obj1), str(obj2))
-        raise FailedCheckException(message)
+        check_failed(message)
 
 
-def CHECK_GT(obj1, obj2, message=None):
-    """ Exit with message if not (obj1 > obj2). """
+def check_gt(obj1, obj2, message=None):
+    """ Raise exception with message if not (obj1 > obj2). """
     if obj1 <= obj2:
         if message is None:
             message = "check failed: %s <= %s" % (str(obj1), str(obj2))
-        raise FailedCheckException(message)
+        check_failed(message)
 
 
-def CHECK_NOTNONE(obj, message=None):
-    """ Exit with message is obj is None """
+def check_notnone(obj, message=None):
+    """ Raise exception with message if obj is None """
     if obj is None:
         if message is None:
             message = "Check failed. Object is None."
-        raise FailedCheckException(message)
+        check_failed(message)
 
 
 

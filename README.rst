@@ -92,13 +92,24 @@ FailedCheckException.
     import math
     
     def compute_something(a):
-        log.CHECK_EQ(type(a), float) # require floating point types
-        log.CHECK_GE(a, 0) # require non-negative values
+        log.check_eq(type(a), float) # require floating point types
+        log.check_ge(a, 0) # require non-negative values
         value = math.sqrt(a)
         return value
    
     if __name__ == '__main__':
         compute_something(10)
+
+
+* check(condition)
+* check_eq(obj1, obj2) 
+* check_ne(obj1, obj2)
+* check_le(obj1, obj2)
+* check_ge(obj1, obj2)
+* check_lt(obj1, obj2)
+* check_gt(obj1, obj2)
+* check_notnone(obj1, obj2)
+
 
 
 Happy logging!

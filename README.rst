@@ -30,8 +30,8 @@ that uses the standard Python logging module will play along nicely.
 Behaviours
 ----------
 
--  Messages are always written to stderr by default. A copy could be saved to
-   file by configuration.
+- Messages are always written to stdout by default. A copy could be saved to
+  file by configuration.
 
 -  Lines are prefixed with a google-style log prefix, of the form
 

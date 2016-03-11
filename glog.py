@@ -64,6 +64,7 @@ flags, like so:
 
 Happy logging!
 """
+import sys
 
 import logging
 import time
@@ -121,12 +122,17 @@ def setLevel(newlevel):
     logger.debug('Log level set to %s', newlevel)
 
 
-def init(filename=None):
+def init(destiny=None):
     logger.propagate = False
-    if filename is None:
+    destiny_type = type(destiny)
+    if destiny is None:
         handler = logging.StreamHandler()
+    elif destiny_type is file:
+        handler = logging.StreamHandler(destiny)
+    elif destiny_type is str:
+        handler = logging.FileHandler(destiny)
     else:
-        handler = logging.FileHandler(filename)
+        print("Cannot handle type {} destiny.".format(destiny_type))
 
     handler.setFormatter(GlogFormatter())
     logger.addHandler(handler)
@@ -174,4 +180,4 @@ GLOG_PREFIX_REGEX = (
     """) % ''.join(_level_letters)
 """Regex you can use to parse glog line prefixes."""
 
-init()
+init(sys.stdout)

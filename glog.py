@@ -15,12 +15,17 @@ the network.  We just want to get on with writing our apps.
 * Your apps and scripts will all have a consistent log format, and the same
   predictable behaviours.
 
-This library configures the root logger, so nearly everything you import
-that uses the standard Python logging module will play along nicely.
-
 ## Behaviours
 
-* Messages are always written to stderr.
+* Messages are always written to `stderr` if `glog` is used uninitialized.
+
+* By calling `glog.init(FILE_NAME)`, where FILE_NAME is a `str`, logs will be
+  saved to that file. Target files only need to be initialized once and could
+  be shared anywhere. Repeated initialization is supported, and all logs will
+  be added to that file only once.
+
+* Calling `glog.init("stderr")` or `glog.init("stdout")` will make glog log to
+  standard error or standard output.
 
 * Lines are prefixed with a google-style log prefix, of the form
 
@@ -64,6 +69,7 @@ flags, like so:
 
 Happy logging!
 """
+import sys
 
 import logging
 import time
@@ -73,6 +79,8 @@ import gflags
 gflags.DEFINE_integer('verbosity', logging.INFO, 'Logging verbosity.',
                       short_name='v')
 FLAGS = gflags.FLAGS
+
+file_names = []
 
 
 def format_message(record):
@@ -112,10 +120,7 @@ class GlogFormatter(logging.Formatter):
         record.getMessage = lambda: record_message
         return logging.Formatter.format(self, record)
 
-logger = logging.getLogger()
-handler = logging.StreamHandler()
-
-level = logger.level
+logger = logging.getLogger("glog")
 
 
 def setLevel(newlevel):
@@ -124,17 +129,36 @@ def setLevel(newlevel):
     logger.debug('Log level set to %s', newlevel)
 
 
-def init():
+def init(filename=None):
+    logger.propagate = False
+    if filename is None:
+        if "stderr" not in file_names:
+            handler = logging.StreamHandler()
+            filename = "stderr"
+    elif filename in file_names:
+        # Do not add files that already has been added.
+        return
+    elif filename == "stderr":
+        handler = logging.StreamHandler(sys.stderr)
+    elif filename == "stdout":
+        handler = logging.StreamHandler(sys.stdout)
+    else:
+        handler = logging.FileHandler(filename)
+
+    file_names.append(filename)
+    handler.setFormatter(GlogFormatter())
+    logger.addHandler(handler)
     setLevel(FLAGS.verbosity)
 
-debug = logging.debug
-info = logging.info
-warning = logging.warning
-warn = logging.warning
-error = logging.error
-exception = logging.exception
-fatal = logging.fatal
-log = logging.log
+debug = logger.debug
+info = logger.info
+warning = logger.warning
+warn = logger.warning
+error = logger.error
+exception = logger.exception
+fatal = logger.fatal
+log = logger.log
+
 
 DEBUG = logging.DEBUG
 INFO = logging.INFO
@@ -142,6 +166,8 @@ WARNING = logging.WARNING
 WARN = logging.WARN
 ERROR = logging.ERROR
 FATAL = logging.FATAL
+
+# basicConfig = logger.basicConfig
 
 _level_names = {
     DEBUG: 'DEBUG',
@@ -166,6 +192,4 @@ GLOG_PREFIX_REGEX = (
     """) % ''.join(_level_letters)
 """Regex you can use to parse glog line prefixes."""
 
-handler.setFormatter(GlogFormatter())
-logger.addHandler(handler)
-setLevel(FLAGS.verbosity)
+init()

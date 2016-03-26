@@ -30,7 +30,16 @@ that uses the standard Python logging module will play along nicely.
 Behaviours
 ----------
 
--  Messages are always written to stderr.
+- Messages are always written to `stderr` if `glog` is used uninitialized.
+
+- By calling `glog.init(FILE_NAME)`, where FILE_NAME is a `str`, logs will be
+  saved to that file. Target files only need to be initialized once and could
+  be shared anywhere. Repeated initialization is supported, and all logs will
+  be added to that file only once.
+
+- Calling `glog.init("stderr")` or `glog.init("stdout")` will make glog log to
+  standard error or standard output.
+
 
 -  Lines are prefixed with a google-style log prefix, of the form
 
@@ -75,6 +84,19 @@ parsing flags, like so:
         posargs = FLAGS(sys.argv)
         log.init()
         main(posargs[1:])
+
+To show log and save a copy to file at the same time:
+
+.. code:: python
+
+    import glog as log
+
+    log.init("example.log")
+
+    log.info("It works.")
+    log.warn("Something not ideal")
+    log.error("Something went wrong")
+    log.fatal("AAAAAAAAAAAAAAA!")
 
 Happy logging!
 

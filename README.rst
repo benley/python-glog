@@ -30,8 +30,16 @@ that uses the standard Python logging module will play along nicely.
 Behaviours
 ----------
 
-- Messages are always written to stdout by default. A copy could be saved to
-  file by configuration.
+- Messages are always written to `stderr` if `glog` is used uninitialized.
+
+- By calling `glog.init(FILE_NAME)`, where FILE_NAME is a `str`, logs will be
+  saved to that file. Target files only need to be initialized once and could
+  be shared anywhere. Repeated initialization is supported, and all logs will
+  be added to that file only once.
+
+- Calling `glog.init("stderr")` or `glog.init("stdout")` will make glog log to
+  standard error or standard output.
+
 
 -  Lines are prefixed with a google-style log prefix, of the form
 

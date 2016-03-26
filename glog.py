@@ -15,12 +15,17 @@ the network.  We just want to get on with writing our apps.
 * Your apps and scripts will all have a consistent log format, and the same
   predictable behaviours.
 
-This library configures the root logger, so nearly everything you import
-that uses the standard Python logging module will play along nicely.
-
 ## Behaviours
 
-* Messages are always written to stderr.
+* Messages are always written to `stderr` if `glog` is used uninitialized.
+
+* By calling `glog.init(FILE_NAME)`, where FILE_NAME is a `str`, logs will be
+  saved to that file. Target files only need to be initialized once and could
+  be shared anywhere. Repeated initialization is supported, and all logs will
+  be added to that file only once.
+
+* Calling `glog.init("stderr")` or `glog.init("stdout")` will make glog log to
+  standard error or standard output.
 
 * Lines are prefixed with a google-style log prefix, of the form
 
@@ -75,6 +80,8 @@ gflags.DEFINE_integer('verbosity', logging.INFO, 'Logging verbosity.',
                       short_name='v')
 FLAGS = gflags.FLAGS
 
+file_names = []
+
 
 def format_message(record):
     try:
@@ -122,18 +129,23 @@ def setLevel(newlevel):
     logger.debug('Log level set to %s', newlevel)
 
 
-def init(destiny=None):
+def init(filename=None):
     logger.propagate = False
-    destiny_type = type(destiny)
-    if destiny is None:
-        handler = logging.StreamHandler()
-    elif destiny_type is file:
-        handler = logging.StreamHandler(destiny)
-    elif destiny_type is str:
-        handler = logging.FileHandler(destiny)
+    if filename is None:
+        if "stderr" not in file_names:
+            handler = logging.StreamHandler()
+            filename = "stderr"
+    elif filename in file_names:
+        # Do not add files that already has been added.
+        return
+    elif filename == "stderr":
+        handler = logging.StreamHandler(sys.stderr)
+    elif filename == "stdout":
+        handler = logging.StreamHandler(sys.stdout)
     else:
-        print("Cannot handle type {} destiny.".format(destiny_type))
+        handler = logging.FileHandler(filename)
 
+    file_names.append(filename)
     handler.setFormatter(GlogFormatter())
     logger.addHandler(handler)
     setLevel(FLAGS.verbosity)
@@ -180,4 +192,4 @@ GLOG_PREFIX_REGEX = (
     """) % ''.join(_level_letters)
 """Regex you can use to parse glog line prefixes."""
 
-init(sys.stdout)
+init()

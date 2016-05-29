@@ -17,9 +17,9 @@ setuptools.setup(
     long_description=README,
     py_modules=['glog'],
     license='BSD',
-    test_suite="tests",
+    test_suite='tests',
     version=VERSION,
-    classifiers = [
+    classifiers=[
         'Programming Language :: Python',
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',

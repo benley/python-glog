@@ -3,7 +3,7 @@
 import os
 import setuptools
 
-VERSION = '0.1'
+VERSION = '0.2'
 
 README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
@@ -17,6 +17,7 @@ setuptools.setup(
     long_description=README,
     py_modules=['glog'],
     license='BSD',
+    test_suite="tests",
     version=VERSION,
     classifiers = [
         'Programming Language :: Python',

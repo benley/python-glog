@@ -11,7 +11,7 @@ on with writing our apps.
 
 Styled somewhat after the twitter.common.log_ interface, which in turn was
 modeled after Google's internal python logger, which was `never actually
-released`_ to the wild, and which in turn was based on the `C++ glog module`_.
+released`_ to the wild, and which in turn was based on the `C++ glog library`_.
 
 Core benefits
 -------------
@@ -76,9 +76,46 @@ parsing flags, like so:
         log.init()
         main(posargs[1:])
 
+
+The `C++ glog library`_ provides a set of `check macros`_ that help document and
+enforce invariants.  These are superior to standard python asserts because
+they provide a detailed message indicating the values that caused the check to 
+fail with no additional boilerplate code.  This makes code more readable.  A
+stack trace is printed which identifies the code-path that caused the failure,
+making it easier to reproduce the error.  Failed checks raise the
+FailedCheckException.
+
+
+.. code:: python
+
+    import glog as log
+    import math
+    
+    def compute_something(a):
+        log.check_eq(type(a), float) # require floating point types
+        log.check_ge(a, 0) # require non-negative values
+        value = math.sqrt(a)
+        return value
+   
+    if __name__ == '__main__':
+        compute_something(10)
+
+
+* check(condition)
+* check_eq(obj1, obj2) 
+* check_ne(obj1, obj2)
+* check_le(obj1, obj2)
+* check_ge(obj1, obj2)
+* check_lt(obj1, obj2)
+* check_gt(obj1, obj2)
+* check_notnone(obj1, obj2)
+
+
+
 Happy logging!
 
 .. _twitter.common.log: https://github.com/twitter/commons/tree/master/src/python/twitter/common/log
 .. _never actually released: https://groups.google.com/d/msg/google-glog/a_JcyJ4p8MQ/Xu-vDPiuCCYJ
-.. _C++ glog module: https://github.com/google/glog
+.. _C++ glog library: https://github.com/google/glog
 .. _gflags: https://github.com/google/python-gflags
+.. _check macros: https://google-glog.googlecode.com/svn/trunk/doc/glog.html#check

@@ -56,7 +56,7 @@ Example use
     log.error("Something went wrong")
     log.fatal("AAAAAAAAAAAAAAA!")
 
-If your app uses gflags_, it will automatically gain a --verbosity flag.
+If your app uses gflags_, it will automatically gain a ``--verbosity`` flag.
 In order for that flag to be effective, you must call log.init() after
 parsing flags, like so:
 
@@ -76,14 +76,16 @@ parsing flags, like so:
         log.init()
         main(posargs[1:])
 
+If you use pyglib.app_ to start your app, it will make that ``log.init()``
+call for you.
 
-The `C++ glog library`_ provides a set of `check macros`_ that help document
-and enforce invariants.  These are superior to standard python asserts because
-they provide a detailed message indicating the values that caused the check to
-fail with no additional boilerplate code.  This makes code more readable.  A
-stack trace is printed which identifies the code-path that caused the failure,
-making it easier to reproduce the error.  Failed checks raise the
-FailedCheckException.
+`Like the C++ version of glog`_, python-glog provides a set of check macros [1]_
+that help document and enforce invariants.  These provide a detailed message
+indicating what values caused the assertion to fail, along with a stack trace
+identifying the code-path that caused the failure, hopefully making it easier
+to reproduce the error.  Failed checks raise the FailedCheckException.  You may
+find these more convenient and/or more familiar than standard Python asserts,
+particularly if you are working in a mixed C++ and Python codebase.
 
 
 .. code:: python
@@ -118,7 +120,16 @@ Provided check functions:
 Happy logging!
 
 .. _twitter.common.log: https://github.com/twitter/commons/tree/master/src/python/twitter/common/log
+
 .. _never actually released: https://groups.google.com/d/msg/google-glog/a_JcyJ4p8MQ/Xu-vDPiuCCYJ
+
 .. _C++ glog library: https://github.com/google/glog
+
 .. _gflags: https://github.com/google/python-gflags
-.. _check macros: https://htmlpreview.github.io/?https://github.com/google/glog/master/doc/glog.html#check
+
+.. _Like the C++ version of glog: https://htmlpreview.github.io/?https://github.com/google/glog/master/doc/glog.html#check
+
+.. _pyglib.app: https://github.com/benley/pyglib
+
+.. [1] Technically these are functions, not macros. Python does not have
+   syntactic macros in the sense that C++ and most lisp-like languages do.

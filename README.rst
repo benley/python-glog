@@ -1,13 +1,12 @@
-glog
-====
+glog for Python
+===============
 
 A simple Google-style logging wrapper for Python.
 
-This library attempts to greatly simplify logging in Python
-applications. Nobody wants to spend hours pouring over the PEP 282
-logger documentation, and almost nobody actually needs things like
-loggers that can be reconfigured over the network. We just want to get
-on with writing our apps.
+This library attempts to greatly simplify logging in Python applications.
+Nobody wants to spend hours pouring over the PEP 282 logger documentation, and
+almost nobody actually needs things like loggers that can be reconfigured over
+the network.  We just want to get on with writing our apps.
 
 Styled somewhat after the twitter.common.log_ interface, which in turn was
 modeled after Google's internal python logger, which was `never actually
@@ -16,16 +15,16 @@ released`_ to the wild, and which in turn was based on the `C++ glog library`_.
 Core benefits
 -------------
 
--  You and your code don't need to care about how logging works. Unless
-   you want to, of course.
+- You and your code don't need to care about how logging works. Unless you
+  want to, of course.
 
--  No more complicated setup boilerplate!
+- No more complicated setup boilerplate!
 
--  Your apps and scripts will all have a consistent log format, and the
-   same predictable behaviours.
+- Your apps and scripts will all have a consistent log format, and the same
+  predictable behaviours.
 
-This library configures the root logger, so nearly everything you import
-that uses the standard Python logging module will play along nicely.
+This library configures the root logger, so nearly everything you import that
+uses the standard Python logging module will play along nicely.
 
 Behaviours
 ----------
@@ -51,41 +50,25 @@ Example use
 
     import glog as log
 
+    log.setLevel("INFO")  # Integer levels are also allowed.
     log.info("It works.")
     log.warn("Something not ideal")
     log.error("Something went wrong")
     log.fatal("AAAAAAAAAAAAAAA!")
 
-If your app uses gflags_, it will automatically gain a ``--verbosity`` flag.
-In order for that flag to be effective, you must call log.init() after
-parsing flags, like so:
+If your app uses gflags_, it will automatically gain a ``--verbosity`` flag,
+and you can skip calling ``log.setLevel``.  Just import glog and start logging.
 
-.. code:: python
+Check macros / assert helpers
+-----------------------------
 
-    import sys
-    import gflags
-    import glog as log
-
-    FLAGS = gflags.FLAGS
-
-    def main(_):
-      log.debug('warble garble %s', FLAGS.verbosity)
-
-    if __name__ == '__main__':
-        posargs = FLAGS(sys.argv)
-        log.init()
-        main(posargs[1:])
-
-If you use pyglib.app_ to start your app, it will make that ``log.init()``
-call for you.
-
-`Like the C++ version of glog`_, python-glog provides a set of check macros [1]_
-that help document and enforce invariants.  These provide a detailed message
-indicating what values caused the assertion to fail, along with a stack trace
-identifying the code-path that caused the failure, hopefully making it easier
-to reproduce the error.  Failed checks raise the FailedCheckException.  You may
-find these more convenient and/or more familiar than standard Python asserts,
-particularly if you are working in a mixed C++ and Python codebase.
+`Like the C++ version of glog`_, python-glog provides a set of check macros
+[1]_ that help document and enforce invariants.  These provide a detailed
+message indicating what values caused the assertion to fail, along with a stack
+trace identifying the code-path that caused the failure, hopefully making it
+easier to reproduce the error.  Failed checks raise the FailedCheckException.
+You may find these more convenient and/or more familiar than standard Python
+asserts, particularly if you are working in a mixed C++ and Python codebase.
 
 
 .. code:: python
@@ -129,7 +112,5 @@ Happy logging!
 
 .. _Like the C++ version of glog: https://htmlpreview.github.io/?https://github.com/google/glog/master/doc/glog.html#check
 
-.. _pyglib.app: https://github.com/benley/pyglib
-
-.. [1] Technically these are functions, not macros. Python does not have
+.. [1] Technically these are functions, not macros.  Python does not have
    syntactic macros in the sense that C++ and most lisp-like languages do.

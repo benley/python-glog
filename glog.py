@@ -50,8 +50,6 @@ class GlogFormatter(logging.Formatter):
 logger = logging.getLogger()
 handler = logging.StreamHandler()
 
-level = logger.level
-
 
 def setLevel(newlevel):
     logger.setLevel(newlevel)

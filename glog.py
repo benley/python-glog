@@ -117,6 +117,7 @@ class VerbosityParser(flags.ArgumentParser):
 
 flags.DEFINE(
     parser=VerbosityParser(),
+    serializer=flags.ArgumentSerializer(),
     name='verbosity',
     default=logging.INFO,
     help='Logging verbosity')

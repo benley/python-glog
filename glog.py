@@ -102,6 +102,18 @@ handler.setFormatter(GlogFormatter())
 logger.addHandler(handler)
 
 
+class CaptureWarningsFlag(flags.BooleanFlag):
+    def __init__(self):
+        flags.BooleanFlag.__init__(self, 'glog_capture_warnings', True,
+                                   "Redirect warnings to log.warn messages")
+
+    def Parse(self, arg):
+        flags.BooleanFlag.Parse(self, arg)
+        logging.captureWarnings(self.value)
+
+flags.DEFINE_flag(CaptureWarningsFlag())
+
+
 class VerbosityParser(flags.ArgumentParser):
     """Sneakily use gflags parsing to get a simple callback."""
 

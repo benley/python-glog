@@ -121,7 +121,10 @@ class VerbosityParser(flags.ArgumentParser):
         try:
             intarg = int(arg)
             # Look up the name for this level (DEBUG, INFO, etc) if it exists
-            level = logging._levelNames.get(intarg, intarg)
+            try:
+                level = logging._levelNames.get(intarg, intarg)
+            except AttributeError:   # This was renamed somewhere b/w 2.7 and 3.4
+                level = logging._levelToName.get(intarg, intarg)
         except ValueError:
             level = arg
         setLevel(level)

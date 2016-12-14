@@ -1,6 +1,9 @@
 glog for Python
 ===============
 
+.. image:: https://travis-ci.org/benley/python-glog.svg?branch=master
+    :target: https://travis-ci.org/benley/python-glog
+
 A simple Google-style logging wrapper for Python.
 
 This library attempts to greatly simplify logging in Python applications.

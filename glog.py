@@ -1,6 +1,7 @@
 """A simple Google-style logging wrapper."""
 
 import logging
+import colorlog
 import time
 import traceback
 import os
@@ -18,7 +19,7 @@ def format_message(record):
     return record_message
 
 
-class GlogFormatter(logging.Formatter):
+class GlogFormatter(colorlog.ColoredFormatter):
     LEVEL_MAP = {
         logging.FATAL: 'F',  # FATAL is alias of CRITICAL
         logging.ERROR: 'E',
@@ -28,7 +29,7 @@ class GlogFormatter(logging.Formatter):
     }
 
     def __init__(self):
-        logging.Formatter.__init__(self)
+        colorlog.ColoredFormatter.__init__(self, '%(log_color)s%(message)s%(reset)s')
 
     def format(self, record):
         try:
@@ -45,7 +46,7 @@ class GlogFormatter(logging.Formatter):
             record.lineno,
             format_message(record))
         record.getMessage = lambda: record_message
-        return logging.Formatter.format(self, record)
+        return colorlog.ColoredFormatter.format(self, record)
 
 logger = logging.getLogger()
 handler = logging.StreamHandler()

@@ -14,6 +14,7 @@ setuptools.setup(
     url='https://github.com/benley/python-glog',
     install_requires=[
         'python-gflags>=3.1',
+        'colorlog',
         'six',  # glog doesn't need six, but gflags 3.1 does and its distutils
                 # "requires" line apparently accomplishes nothing, so ...
     ],

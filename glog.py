@@ -60,7 +60,7 @@ def setLevel(newlevel):
 
 def setDirectory(directory):
     if not os.path.exists(directory):
-        os.mkdir(directory)
+        os.makedirs(directory)
 
     localtime = time.localtime()
     filepath = directory + "/%04d%02d%02d-%02d%02d%02d.log" % (

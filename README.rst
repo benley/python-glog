@@ -1,4 +1,4 @@
-glog for Python
+color glog for Python
 ===============
 
 .. image:: https://travis-ci.org/benley/python-glog.svg?branch=master

@@ -3,7 +3,7 @@
 import os
 import setuptools
 
-VERSION = '0.3.1'
+VERSION = '0.3.2'
 
 README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
@@ -14,6 +14,7 @@ setuptools.setup(
     url='https://github.com/benley/python-glog',
     install_requires=[
         'python-gflags>=3.1',
+        'colorlog',
         'six',  # glog doesn't need six, but gflags 3.1 does and its distutils
                 # "requires" line apparently accomplishes nothing, so ...
     ],

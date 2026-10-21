@@ -6,6 +6,11 @@ glog for Python
 
 A simple Google-style logging wrapper for Python.
 
+**This project is obsolete!**  You should look at the `logging module from
+absl-py`_ instead.
+
+.. _logging module from absl-py: https://abseil.io/docs/python/guides/logging
+
 This library attempts to greatly simplify logging in Python applications.
 Nobody wants to spend hours pouring over the PEP 282 logger documentation, and
 almost nobody actually needs things like loggers that can be reconfigured over

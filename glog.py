@@ -1,10 +1,11 @@
 """A simple Google-style logging wrapper."""
 
 import logging
+import colorlog
 import time
 import traceback
 import os
-
+import time
 import gflags as flags
 
 FLAGS = flags.FLAGS
@@ -18,7 +19,7 @@ def format_message(record):
     return record_message
 
 
-class GlogFormatter(logging.Formatter):
+class GlogFormatter(colorlog.ColoredFormatter):
     LEVEL_MAP = {
         logging.FATAL: 'F',  # FATAL is alias of CRITICAL
         logging.ERROR: 'E',
@@ -28,7 +29,7 @@ class GlogFormatter(logging.Formatter):
     }
 
     def __init__(self):
-        logging.Formatter.__init__(self)
+        colorlog.ColoredFormatter.__init__(self, '%(log_color)s%(message)s%(reset)s')
 
     def format(self, record):
         try:
@@ -45,7 +46,8 @@ class GlogFormatter(logging.Formatter):
             record.lineno,
             format_message(record))
         record.getMessage = lambda: record_message
-        return logging.Formatter.format(self, record)
+        return colorlog.ColoredFormatter.format(self, record)
+
 
 logger = logging.getLogger()
 handler = logging.StreamHandler()
@@ -56,8 +58,22 @@ def setLevel(newlevel):
     logger.debug('Log level set to %s', newlevel)
 
 
+def setDirectory(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    localtime = time.localtime()
+    filepath = directory + "/%04d%02d%02d-%02d%02d%02d.log" % (
+        localtime.tm_year, localtime.tm_mon, localtime.tm_mday, localtime.tm_hour, localtime.tm_min, localtime.tm_sec)
+    fhandler = logging.FileHandler(filepath)
+    logger.addHandler(fhandler)
+    logger.debug('Log path set to %s' % filepath)
+
+
 def init():
     setLevel(FLAGS.verbosity)
+    setDirectory(FLAGS.directory)
+
 
 debug = logging.debug
 info = logging.info
@@ -86,16 +102,16 @@ _level_names = {
 _level_letters = [name[0] for name in _level_names.values()]
 
 GLOG_PREFIX_REGEX = (
-    r"""
-    (?x) ^
-    (?P<severity>[%s])
-    (?P<month>\d\d)(?P<day>\d\d)\s
-    (?P<hour>\d\d):(?P<minute>\d\d):(?P<second>\d\d)
-    \.(?P<microsecond>\d{6})\s+
-    (?P<process_id>-?\d+)\s
-    (?P<filename>[a-zA-Z<_][\w._<>-]+):(?P<line>\d+)
-    \]\s
-    """) % ''.join(_level_letters)
+                        r"""
+                        (?x) ^
+                        (?P<severity>[%s])
+                        (?P<month>\d\d)(?P<day>\d\d)\s
+                        (?P<hour>\d\d):(?P<minute>\d\d):(?P<second>\d\d)
+                        \.(?P<microsecond>\d{6})\s+
+                        (?P<process_id>-?\d+)\s
+                        (?P<filename>[a-zA-Z<_][\w._<>-]+):(?P<line>\d+)
+                        \]\s
+                        """) % ''.join(_level_letters)
 """Regex you can use to parse glog line prefixes."""
 
 handler.setFormatter(GlogFormatter())
@@ -111,6 +127,7 @@ class CaptureWarningsFlag(flags.BooleanFlag):
         flags.BooleanFlag.Parse(self, arg)
         logging.captureWarnings(self.value)
 
+
 flags.DEFINE_flag(CaptureWarningsFlag())
 
 
@@ -123,12 +140,13 @@ class VerbosityParser(flags.ArgumentParser):
             # Look up the name for this level (DEBUG, INFO, etc) if it exists
             try:
                 level = logging._levelNames.get(intarg, intarg)
-            except AttributeError:   # This was renamed somewhere b/w 2.7 and 3.4
+            except AttributeError:  # This was renamed somewhere b/w 2.7 and 3.4
                 level = logging._levelToName.get(intarg, intarg)
         except ValueError:
             level = arg
         setLevel(level)
         return level
+
 
 flags.DEFINE(
     parser=VerbosityParser(),
@@ -136,6 +154,20 @@ flags.DEFINE(
     name='verbosity',
     default=logging.INFO,
     help='Logging verbosity')
+
+
+class DirectoryParser(flags.ArgumentParser):
+    def Parse(self, arg):
+        setDirectory(arg)
+        return arg
+
+
+flags.DEFINE(
+    parser=DirectoryParser(),
+    serializer=flags.ArgumentSerializer(),
+    name='logdir',
+    default=None,
+    help='The directory of log output.')
 
 
 # Define functions emulating C++ glog check-macros
